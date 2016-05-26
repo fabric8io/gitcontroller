@@ -23,40 +23,6 @@ import (
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
 )
 
-const (
-	consoleMetadataUrl           = "io/fabric8/apps/console/maven-metadata.xml"
-	baseConsoleUrl               = "io/fabric8/apps/console/%[1]s/console-%[1]s-kubernetes.json"
-	consoleKubernetesMetadataUrl = "io/fabric8/apps/console-kubernetes/maven-metadata.xml"
-	baseConsoleKubernetesUrl     = "io/fabric8/apps/console-kubernetes/%[1]s/console-kubernetes-%[1]s-kubernetes.json"
-
-	devopsTemplatesDistroUrl = "io/fabric8/forge/distro/distro/%[1]s/distro-%[1]s-templates.zip"
-	devOpsMetadataUrl        = "io/fabric8/forge/distro/distro/maven-metadata.xml"
-
-	kubeflixTemplatesDistroUrl = "io/fabric8/kubeflix/distro/distro/%[1]s/distro-%[1]s-templates.zip"
-	kubeflixMetadataUrl        = "io/fabric8/kubeflix/distro/distro/maven-metadata.xml"
-
-	zipkinTemplatesDistroUrl = "io/fabric8/zipkin/packages/distro/%[1]s/distro-%[1]s-templates.zip"
-	zipkinMetadataUrl        = "io/fabric8/zipkin/packages/distro/maven-metadata.xml"
-
-	iPaaSTemplatesDistroUrl = "io/fabric8/ipaas/distro/distro/%[1]s/distro-%[1]s-templates.zip"
-	iPaaSMetadataUrl        = "io/fabric8/ipaas/distro/distro/maven-metadata.xml"
-
-	Fabric8SCC    = "fabric8"
-	PrivilegedSCC = "privileged"
-	RestrictedSCC = "restricted"
-
-	runFlag             = "app"
-	versioniPaaSFlag    = "version-ipaas"
-	versionDevOpsFlag   = "version-devops"
-	versionKubeflixFlag = "version-kubeflix"
-	versionZipkinFlag   = "version-zipkin"
-	mavenRepoFlag       = "maven-repo"
-	dockerRegistryFlag  = "docker-registry"
-
-	typeLabel          = "type"
-	teamTypeLabelValue = "team"
-)
-
 type createFunc func(c *k8sclient.Client, f *cmdutil.Factory, name string) (Result, error)
 
 func NewCmdRun(f *cmdutil.Factory) *cobra.Command {
@@ -77,9 +43,18 @@ func NewCmdRun(f *cmdutil.Factory) *cobra.Command {
 			util.Info(" in namespace ")
 			util.Successf("%s\n\n", ns)
 
+			selector := cmd.Flags().Lookup(Selector).Value.String()
+			listOpts, err := createListOpts(selector)
+			if err != nil {
+				printError(err)
+			}
+			_, err = c.Extensions().Deployments(ns).Watch(*listOpts)
+			if err != nil {
+				printError(err)
+			}
+
 		},
 	}
-	cmd.PersistentFlags().StringP("domain", "d", defaultDomain(), "The domain name to append to the service name to access web applications")
 	/*
 		cmd.PersistentFlags().String("api-server", "", "overrides the api server url")
 		cmd.PersistentFlags().String(runFlag, "", "The name of the fabric8 app to startup. e.g. use `--app=cd-pipeline` to run the main CI/CD pipeline app")

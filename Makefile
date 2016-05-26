@@ -40,6 +40,10 @@ build: *.go */*.go fmt
 install: *.go */*.go
 	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(NAME).go
 
+bootstrap:
+	$(GO) get -u github.com/Masterminds/glide
+	GO15VENDOREXPERIMENT=1 glide update --strip-vendor --strip-vcs --update-vendored
+
 fmt:
 	@([[ ! -z "$(FORMATTED)" ]] && printf "Fixed unformatted files:\n$(FORMATTED)") || true
 

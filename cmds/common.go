@@ -17,12 +17,10 @@ package cmds
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/daviddengcn/go-colortext"
 	"github.com/fabric8io/gitcontroller/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
+	"k8s.io/kubernetes/pkg/api"
+	"k8s.io/kubernetes/pkg/labels"
 )
 
 type Result string
@@ -32,52 +30,39 @@ const (
 	Failure Result = "✘"
 
 	// cmd flags
-	yesFlag       = "yes"
-	hostPathFlag  = "host-path"
-	nameFlag      = "name"
-	domainFlag    = "domain"
-	apiServerFlag = "api-server"
-	consoleFlag   = "console"
-	templatesFlag = "templates"
+	Namespace = "namespace"
+	Selector  = "selector"
 
-	DefaultDomain = "vagrant.f8"
+	DataDir = "repos"
 )
-
-func defaultDomain() string {
-	defaultDomain := os.Getenv("KUBERNETES_DOMAIN")
-	if defaultDomain == "" {
-		defaultDomain = DefaultDomain
-	}
-	return defaultDomain
-}
-
-func missingFlag(cmd *cobra.Command, name string) (Result, error) {
-	util.Errorf("No option -%s specified!\n", hostPathFlag)
-	text := cmd.Name()
-	parent := cmd.Parent()
-	if parent != nil {
-		text = parent.Name() + " " + text
-	}
-	util.Infof("Please try something like: %s --%s='some value' ...\n\n", text, hostPathFlag)
-	return Failure, nil
-}
-
-func confirmAction(flags *pflag.FlagSet) bool {
-	if flags.Lookup(yesFlag).Value.String() == "false" {
-		util.Info("Continue? [Y/n] ")
-		cont := util.AskForConfirmation(true)
-		if !cont {
-			util.Fatal("Cancelled...\n")
-			return false
-		}
-	}
-	return true
-}
 
 func showBanner() {
 	ct.ChangeColor(ct.Blue, false, ct.None, false)
 	fmt.Println(fabric8AsciiArt)
 	ct.ResetColor()
+}
+
+func createListOpts(selector string) (*api.ListOptions, error) {
+	listOpts := api.ListOptions{}
+	if len(selector) > 0 {
+		sel, err := labels.Parse(selector)
+		if err != nil {
+			return nil, err
+		}
+		util.Info("Using label selector: ")
+		util.Successf("%v", sel)
+		util.Info("\n")
+
+		listOpts.LabelSelector = sel
+	}
+	return &listOpts, nil
+}
+
+func printError(err error) {
+	if err != nil {
+		util.Failuref("%v", err)
+	}
+	util.Blank()
 }
 
 const fabric8AsciiArt = `             [38;5;25m▄[38;5;25m▄▄[38;5;25m▄[38;5;25m▄[38;5;25m▄[38;5;235m▄[39m         [00m

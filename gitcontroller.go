@@ -35,6 +35,8 @@ func main() {
 	}
 
 	cmds.PersistentFlags().BoolP("yes", "y", false, "assume yes")
+	cmds.PersistentFlags().String(commands.Namespace, "", "namespace to query")
+	cmds.PersistentFlags().String(commands.Selector, "", "label selector to query")
 
 	f := cmdutil.NewFactory(nil)
 	f.BindFlags(cmds.PersistentFlags())
