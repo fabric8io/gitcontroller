@@ -29,7 +29,7 @@ func GitPull(path string) error {
 		return err
 	}
 	cmd := exec.Command("git", "pull")
-	return waitForCommand(cmd)
+	return waitForCommandIgnoreOutput(cmd)
 }
 
 // GitLatestCommitSince returns the latest commit id in the same branch for the local clone
@@ -43,7 +43,6 @@ func GitLatestCommitSince(path string, ref string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	util.Info("Found branch: " + branch + "\n")
 	if len(branch) <= 0 {
 		branch = "master"
 	}
@@ -78,6 +77,10 @@ func firstWord(text string) string {
 func waitForCommand(cmd *exec.Cmd) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	return waitForCommandIgnoreOutput(cmd)
+}
+
+func waitForCommandIgnoreOutput(cmd *exec.Cmd) error {
 	var waitStatus syscall.WaitStatus
 	if err := cmd.Run(); err != nil {
 		printErr(err)
