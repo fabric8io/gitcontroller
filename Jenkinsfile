@@ -28,7 +28,7 @@ node{
 
 }
 def externalImages(){
-  return ['git-controller']
+  return ['gitcontroller']
 }
 
 def stage(){
