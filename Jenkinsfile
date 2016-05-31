@@ -49,7 +49,7 @@ def release(project){
     groupId = 'io.fabric8'
     githubOrganisation = 'fabric8io'
     artifactIdToWatchInCentral = 'git-controller'
-    artifactExtensionToWatchInCentral = 'jar'
+    artifactExtensionToWatchInCentral = 'pom'
     promoteToDockerRegistry = 'docker.io'
     dockerOrganisation = 'fabric8'
     extraImagesToTag = externalImages()
