@@ -1,33 +1,32 @@
 #!/usr/bin/groovy
 
 node{
-  ws('gitcontroller'){
-    checkout scm
+  checkout scm
 
-    kubernetes.pod('buildpod').withImage('fabric8/go-builder')
-    .withEnvVar('GOPATH','/home/jenkins/workspace/workspace/go')
-    .withPrivileged(true).inside {
+  kubernetes.pod('buildpod').withImage('fabric8/go-builder')
+  .withEnvVar('GOPATH','/home/jenkins/workspace/workspace/go')
+  .withPrivileged(true).inside {
 
-      stage 'build binary'
+    stage 'Build binary'
 
-      sh "mkdir -p ../go/src/github.com/fabric8io/gitcontroller; cp -R ../${env.JOB_NAME}/. ../go/src/github.com/fabric8io/gitcontroller/; cd ../go/src/github.com/fabric8io/gitcontroller; make"
+    sh "mkdir -p ../go/src/github.com/fabric8io/gitcontroller; cp -R ../${env.JOB_NAME}/. ../go/src/github.com/fabric8io/gitcontroller/; cd ../go/src/github.com/fabric8io/gitcontroller; make"
 
-      sh "cp -R ../go/src/github.com/fabric8io/gitcontroller/build ."
-    }
-    def imageName = 'gitcontroller'
-
-    stage 'Stage'
-    def stagedProject = stage()
-    def tag = stagedProject[1]
-
-    kubernetes.image().withName(imageName).build().fromPath(".")
-    kubernetes.image().withName(imageName).tag().inRepository("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).force().withTag(tag)
-    kubernetes.image().withName("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).push().withTag(tag).toRegistry()
-
-
-    stage 'Promote'
-    release(stagedProject)
+    sh "cp -R ../go/src/github.com/fabric8io/gitcontroller/build ."
   }
+
+  stage 'Build image'
+  def imageName = 'gitcontroller'
+  kubernetes.image().withName(imageName).build().fromPath(".")
+
+  stage 'Stage'
+  def stagedProject = stage()
+  def tag = stagedProject[1]
+  kubernetes.image().withName(imageName).tag().inRepository("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).force().withTag(tag)
+  kubernetes.image().withName("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).push().withTag(tag).toRegistry()
+
+
+  stage 'Promote'
+  release(stagedProject)
 }
 
 def externalImages(){
