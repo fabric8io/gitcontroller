@@ -41,6 +41,8 @@ const (
 	PollTime  = "poll-time"
 
 	DataDir = "repos"
+
+	NamespaceEnvVar = "KUBERNETES_NAMESPACE"
 )
 
 var initialDir = ""

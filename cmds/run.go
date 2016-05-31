@@ -27,6 +27,7 @@ import (
 	"k8s.io/kubernetes/pkg/apis/extensions"
 	k8sclient "k8s.io/kubernetes/pkg/client/unversioned"
 	cmdutil "k8s.io/kubernetes/pkg/kubectl/cmd/util"
+	"os"
 	"strconv"
 	"time"
 )
@@ -53,7 +54,10 @@ func NewCmdRun(f *cmdutil.Factory) *cobra.Command {
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			c, cfg := client.NewClient(f)
-			ns, _, _ := f.DefaultNamespace()
+			ns := os.Getenv(NamespaceEnvVar)
+			if len(ns) <= 0 {
+				ns, _, _ = f.DefaultNamespace()
+			}
 			util.Info("Running gitcontroller on the ")
 			util.Success(string(util.TypeOfMaster(c)))
 			util.Info(" installation at ")

@@ -5,5 +5,11 @@ spec:
       containers:
         - image: fabric8/gitcontroller:latest
           name: gitcontroller
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
       serviceAccount: gitcontroller
 
