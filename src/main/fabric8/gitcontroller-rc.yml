@@ -3,7 +3,7 @@ spec:
   template:
     spec:
       containers:
-        - image: fabric8:gitcontroller:latest
+        - image: fabric8/gitcontroller:latest
           name: gitcontroller
       serviceAccount: gitcontroller
 
