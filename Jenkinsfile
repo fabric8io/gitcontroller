@@ -53,7 +53,3 @@ def release(project){
     extraImagesToTag = externalImages()
   }
 }
-
-def externalImages(){
-  return ['git-controller']
-}
