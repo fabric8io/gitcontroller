@@ -47,8 +47,6 @@ gitcontroller run
 ### Prerequisites
 
 Install [go version 1.5.1](https://golang.org/doc/install)
-Install [godep](https://github.com/tools/godep)
-
 
 ### Building
 
