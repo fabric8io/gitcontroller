@@ -15,13 +15,15 @@ node{
     sh "cp -R ../go/src/github.com/fabric8io/gitcontroller/build ."
   }
   def imageName = 'gitcontroller'
-  def tag = 'latest'
 
   stage 'Stage'
   def stagedProject = stage()
+  def tag = stagedProject[1]
+
   kubernetes.image().withName(imageName).build().fromPath(".")
-  kubernetes.image().withName(imageName).tag().inRepository('docker.io/fabric8/'+imageName).force().withTag(tag)
-  kubernetes.image().withName('docker.io/fabric8/'+imageName).push().withTag(tag).toRegistry()
+  kubernetes.image().withName(imageName).tag().inRepository("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).force().withTag(tag)
+  kubernetes.image().withName("${env.FABRIC8_DOCKER_REGISTRY_SERVICE_HOST}:${env.FABRIC8_DOCKER_REGISTRY_SERVICE_PORT}/fabric8/"+imageName).push().withTag(tag).toRegistry()
+
 
   stage 'Promote'
   release(stagedProject)
@@ -35,7 +37,6 @@ def stage(){
   return stageProject{
     project = 'fabric8io/gitcontroller'
     useGitTagForNextVersion = true
-    extraImagesToStage = externalImages()
   }
 }
 
