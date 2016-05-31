@@ -1,0 +1,9 @@
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - image: fabric8:gitcontroller:latest
+          name: gitcontroller
+      serviceAccount: gitcontroller
+
