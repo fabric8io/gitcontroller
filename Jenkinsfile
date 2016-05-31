@@ -33,7 +33,7 @@ def externalImages(){
 
 def stage(){
   return stageProject{
-    project = repo()
+    project = 'fabric8io/gitcontroller'
     useGitTagForNextVersion = true
     extraImagesToStage = externalImages()
   }
