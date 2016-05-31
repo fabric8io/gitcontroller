@@ -24,6 +24,7 @@
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Git Controller</name>
+  <description>Perform rolling upgrades of Kubernetes Deployments following a new git repository revision</description>
 
   <url>http://fabric8.io/</url>
   <inceptionYear>2015</inceptionYear>
