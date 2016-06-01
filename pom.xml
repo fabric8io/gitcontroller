@@ -21,7 +21,7 @@
 
   <groupId>io.fabric8</groupId>
   <artifactId>git-controller</artifactId>
-  <version>1-SNAPSHOT</version>
+  <version>0.0.5</version>
   <packaging>pom</packaging>
   <name>Git Controller</name>
   <description>Perform rolling upgrades of Kubernetes Deployments following a new git repository revision</description>
