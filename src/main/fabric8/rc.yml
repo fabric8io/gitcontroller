@@ -3,8 +3,7 @@ spec:
   template:
     spec:
       containers:
-        - image: fabric8/gitcontroller:latest
-          name: gitcontroller
+        - image: fabric8/gitcontroller:${fabric8.docker.label}
           env:
             - name: KUBERNETES_NAMESPACE
               valueFrom:
