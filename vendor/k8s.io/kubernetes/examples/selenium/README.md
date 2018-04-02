@@ -84,13 +84,13 @@ Now that the Hub is up, we can deploy workers.
 This will deploy 2 Chrome nodes.
 
 ```console
-kubectl create --file=examples/selenium/selenium-node-chrome-rc.yaml
+kubectl create --filename=examples/selenium/selenium-node-chrome-rc.yaml
 ```
 
 And 2 Firefox nodes to match.
 
 ```console
-kubectl create --file=examples/selenium/selenium-node-firefox-rc.yaml
+kubectl create --filename=examples/selenium/selenium-node-firefox-rc.yaml
 ```
 
 Once the pods start, you will see them show up in the Selenium Hub interface.
